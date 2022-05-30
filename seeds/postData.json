@@ -1,0 +1,14 @@
+[
+    {
+        "_id": "1",
+        "createdAt": "05/02/23",
+        "body": "This is a greate Potato",
+        "username": "D-Great-Potato"
+        
+    },
+    {   "_id": "2",
+        "createdAt": "05/02/22",
+        "body": "This is a greate Potato2",
+        "username": "D-Great-Potato2"
+    }
+]
