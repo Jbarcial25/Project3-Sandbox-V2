@@ -10,6 +10,10 @@ const typeDefs = gql`
         posts: [Post]!
     }
 
+    input RegisterInput{
+        user
+    }
+
     type Post {
         _id: ID
         postText: String
@@ -25,12 +29,24 @@ const typeDefs = gql`
         createdAt: String
     }
 
+    type Auth {
+        token: ID!
+        user: User
+    }
+
     type Query {
         users: [User]
         user(username: String!): User
         posts(username: String): [Post]
         post(postId: ID!): Post
         me: User
+    }
+
+    type Mutation {
+        addUser(username: String!, email: String!, password: String!): Auth
+        login(email: String!, password: String!): Auth
+        addPost(postText: String!): Post
+        removePost(postId: ID!): Post
     }
 `;
 
