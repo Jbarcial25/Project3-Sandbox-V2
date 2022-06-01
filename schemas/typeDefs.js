@@ -10,10 +10,6 @@ const typeDefs = gql`
         posts: [Post]!
     }
 
-    input RegisterInput{
-        user
-    }
-
     type Post {
         _id: ID
         postText: String
