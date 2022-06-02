@@ -10,7 +10,7 @@ const ThoughList = ({
     if(!posts.lengths) {
         return <h3> No posts yet </h3>
     }
-
+    
 }
 
 

@@ -83,26 +83,30 @@ const resolvers = {
         },
         likePost: async (parent, { postId }, context) => {
             if (context.user) {
+                console.log(context.user)
                 const post = await Post.findById({
                     _id: postId,
+
                 });
 
                 if (post) {
-                    if (post.likes.find(like => like.username === context.username)) {
-                        //Post is already like and will unlike it
-                        post.likes = post.likes.filter((like) => like.username !== context.username)
-                    } else {
-                        //when post is not liked, when cliked, then post it
-                        // const username = post.likes.username
+                    console.log(post.likes)
+                    
+                    // if (post.likes.find(like => like.username === context.user.username)) {
+                    //     //Post is already like and will unlike it
+                    //     post.likes = post.likes.filter((like) => like.username !== context.user.username)
+                    // } else {
+                    //     //when post is not liked, when cliked, then post it
+                    //     // const username = post.likes.username
 
-                        post.likes.push({
-                            username: post.likes.username, // delete likes.username if it doesn't work.
-                            createdAt: new Date().toISOString()
-                        });
-                    }
+                    //     post.likes.push({
+                    //         username: context.user.username, // delete likes.username if it doesn't work.
+                    //         createdAt: new Date().toISOString()
+                    //     });
+                    // }
 
-                    await post.save();
-                    return post;
+                    // await post.save();
+                    // return post;
 
                 } else throw new UserInputError('Post not found')
             }

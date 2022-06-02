@@ -34,8 +34,8 @@ const typeDefs = gql`
 
     type Like {
         _id: ID!
-        username: String!
-        createAt: String!
+        username: User
+        createAt: String
     }
 
     type Query {
