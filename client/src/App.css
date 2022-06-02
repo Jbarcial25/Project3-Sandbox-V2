@@ -1,0 +1,25 @@
+@import url('http://fonts.cdnfonts.com/css/halimun');
+@import url('https://fonts.googleapis.com/css2?family=Itim&family=Mali&display=swap');
+
+.App {
+    background-image: url(./img/background.png);
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+.text {
+    font-weight: bold;
+}
+
+.halimun {
+    font-family: 'Halimun', sans-serif;                                          
+}
+
+.gloria {
+    font-family: 'Itim', cursive;
+}
+
+.indie {
+    font-family: 'Mali', cursive;
+}
