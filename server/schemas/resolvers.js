@@ -89,9 +89,16 @@ const resolvers = {
 
                 });
 
+                console.log(post)
+
                 if (post) {
                     console.log(post.likes)
-                    
+
+                    //Need to create a mapping that will  find if a user has already liked the post
+                    console.log(post.likes.username)
+                    if (post.likes.username === context.user.username) {
+                        
+                    }
                     // if (post.likes.find(like => like.username === context.user.username)) {
                     //     //Post is already like and will unlike it
                     //     post.likes = post.likes.filter((like) => like.username !== context.user.username)
