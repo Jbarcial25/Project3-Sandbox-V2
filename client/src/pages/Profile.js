@@ -8,6 +8,7 @@ import {
   Box,
   Center,
   Container,
+  Divider,
   FormControl,
   FormLabel,
   Grid,
@@ -29,10 +30,14 @@ import {
 import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode';
 import { FaSun, FaMoon, FaGithub, FaUser, FaPaperPlane, FaHeart, FaTrashAlt } from 'react-icons/fa';
 
+import { useQuery } from '@apollo/client';
+import { QUERY_USER, QUERY_POSTS, QUERY_SINGLE_POST, QUERY_ME } from '../utils/queries';
+import ProfileList from '../components/ProfileLists';
+
 const Profile = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const isDark = colorMode === 'dark';
-  const textcolor = useColorModeValue('#E8DFD8', 'yellow.900');
+  const textcolor = useColorModeValue('yellow.900', '#E8DFD8');
   const bgcolor = useColorModeValue('RGBA(0, 0, 0, 0.16)', 'RGBA(0, 0, 0, 0.36)');
   const toast = useToast();
   const navigate = useNavigate();
@@ -125,7 +130,8 @@ const Profile = () => {
     }
   };
 
-  
+  const { loading, data } = useQuery(QUERY_ME);
+  const me = data?.me || [];
 
   return (
     <Stack p={5}>
@@ -221,6 +227,8 @@ const Profile = () => {
             </Center>
           </Box>
         </WrapItem>
+
+        <Divider></Divider>
         
         <Grid templateColumns='repeat(5, 1fr)' gap={5}>
 
@@ -228,7 +236,7 @@ const Profile = () => {
           <GridItem colSpan={1}>
               <Box m={3}>
                   <Link href='https://buy.stripe.com/test_aEU7sD5at8bBali004'>
-                      <Image src='./images/adss4.png' />
+                      <Image src={isDark ? './images/dark4.png' : './images/adss4.png'} />
                   </Link>
               </Box>
           </GridItem>
@@ -243,89 +251,25 @@ const Profile = () => {
                   > 
                       Here's some news for you...
               </Text>
-              <Box m={3}>
-                  <FormControl id='comment' >
-                      <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username1 </FormLabel>
-                      <InputGroup
-                          size='md'
-                          boxShadow='lg'
-                      >
-                          <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
-                              variant='filled'
-                              type='comment'
-                              placeholder='Type something here... '
-                          />
-                          <InputRightElement mr={5} p='33px'>
-                              <IconButton
-                                  icon={<FaHeart />} 
-                                  backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                  color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                              <IconButton 
-                                  icon={<FaTrashAlt />} 
-                                  backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                  color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                          </InputRightElement>
-                      </InputGroup>
-                  </FormControl>
-              </Box>
-              <Box m={3}>
-                  <FormControl id='comment' >
-                      <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username2 </FormLabel>
-                      <InputGroup
-                          size='md'
-                          boxShadow='lg'
-                      >
-                          <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
-                              variant='filled'
-                              type='comment'
-                              placeholder='Type something here... '
-                          />
-                          <InputRightElement mr={5} p='33px'>
-                              <IconButton
-                                  icon={<FaHeart />} 
-                                  backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                  color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                              <IconButton 
-                                  icon={<FaTrashAlt />} 
-                                  backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                  color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                          </InputRightElement>
-                          
-                      </InputGroup>
-                  </FormControl>
-              </Box>
-              <Box m={3}>
-                  <FormControl id='comment' >
-                      <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username3 </FormLabel>
-                      <InputGroup
-                          size='md'
-                          boxShadow='lg'
-                      >
-                          <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
-                              variant='filled'
-                              type='comment'
-                              placeholder='Type something here... '
-                          />
-                          <InputRightElement mr={5} p='33px'>
-                              <IconButton
-                                  icon={<FaHeart />} 
-                                  backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                  color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                              <IconButton 
-                                  icon={<FaTrashAlt />} 
-                                  backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                  color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                          </InputRightElement>
-                      </InputGroup>
-                  </FormControl>
-              </Box>
+
+              {/* user's posts */}
+              {loading ? (
+                  <Box m={3}>
+                    No Posts
+                  </Box>
+                ) : (
+                  <ProfileList 
+                    me={me}
+                  />
+                )}
+              
           </GridItem>
 
           {/* paid ads */}
           <GridItem colEnd={6}>
               <Box m={5}>
                   <Link href='https://buy.stripe.com/test_eVaaEP7iBajJ9he8wx'>
-                      <Image src='./images/adsss3.png' />
+                      <Image src={isDark ? './images/dark3.png' : './images/adsss3.png'} />
                   </Link>
                   
               </Box>

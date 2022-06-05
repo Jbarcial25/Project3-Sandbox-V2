@@ -1,7 +1,7 @@
 @import url('http://fonts.cdnfonts.com/css/halimun');
 @import url('https://fonts.googleapis.com/css2?family=Itim&family=Mali&display=swap');
 
-.App {
+.background {
     background-image: url(./img/background.png);
     min-height: 100vh;
     background-size: cover;

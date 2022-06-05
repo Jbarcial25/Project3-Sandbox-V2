@@ -1,44 +1,31 @@
+import Authspage from './auths/Authspage';
 import { Flex, Stack, HStack, Heading, Grid, GridItem, Spacer } from '@chakra-ui/layout';
 import { IconButton, Link, Box, Button, Center, Divider, ButtonGroup, Container, Image, InputGroup, FormControl, FormLabel, Input, Text, InputRightElement, Wrap, WrapItem } from '@chakra-ui/react';
 import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode'
-import { motion } from "framer-motion";
-import { Formik, Form, Field,  ErrorMessage } from 'formik';
 
-import Login from './auths/Login';
-import Signup from './auths/Signup';
 import { FaSun, FaMoon, FaGithub, FaPaperPlane, FaHeart, FaTrashAlt } from 'react-icons/fa';
-
-import Authspage from './auths/Authspage';
 
 // swiper elements
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Autoplay, Navigation, Pagination, Controller, Thumbs, EffectFade } from 'swiper';
 import 'swiper/css';
 
+import { useQuery } from '@apollo/client';
+import { QUERY_USER, QUERY_POSTS, QUERY_SINGLE_POST, QUERY_ME } from '../utils/queries';
+
 export default function Homepage({ loggedIn, setLoggedIn }) {
 
     const { colorMode, toggleColorMode } = useColorMode();
     const isDark = colorMode === 'dark';
-    const textcolor = useColorModeValue('#E8DFD8', 'yellow.900');
+    const textcolor = useColorModeValue('yellow.900', '#E8DFD8');
     const bgcolor = useColorModeValue('RGBA(0, 0, 0, 0.16)', 'RGBA(0, 0, 0, 0.36)');
+    const color = useColorModeValue('#ECE8DF', '#BFAE98')
 
     const outerBoxStyles = {
         background:
           'url(../img/background.png) center/cover no-repeat',
     }
 
-    // const slides = [];
-
-    // for (let i = 0; i < 5; i++) {
-    //     slides.push(
-    //       <SwiperSlide key={`slide-${i}`} tag='Container'>
-    //         <img
-    //           src={`https://picsum.photos/id/${i + 1}/500/300`}
-    //           alt={`Slide ${i}`}
-    //         />
-    //       </SwiperSlide>
-    //     );
-    //   }
 
     return (
         <Stack p={5} sx={outerBoxStyles}>
@@ -62,8 +49,8 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                             borderRadius='md'
                             boxShadow='lg'
                             type='button'
-                            > 
-                                My Account 
+                            >
+                            <Link to='/profile'> My Account </Link>
                         </Button>
                         <Button onClick={() => setLoggedIn(!loggedIn)}
                             ml={8} 
@@ -119,7 +106,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                         {/* paid ads */}
                         <Box m={3}>
                                 <Link href='https://buy.stripe.com/test_aEU7sD5at8bBali004'>
-                                    <Image src='./images/adss4.png' />
+                                    <Image src={isDark ? './images/dark4.png' : './images/adss4.png'} />
                                 </Link>
                             </Box>
                         <GridItem colSpan={3}>
@@ -132,9 +119,11 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                 > 
                                     Here's some news for you...
                             </Text>
+
+                            {/* user's comment 1 */}
                             <Box m={3}>
-                                <FormControl id='comment' >
-                                    <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username1 </FormLabel>
+                                <FormControl isReadOnly id='comment' >
+                                    <FormLabel color={textcolor}> username1 </FormLabel>
                                     <InputGroup
                                         size='md'
                                         boxShadow='lg'
@@ -142,7 +131,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                         <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
                                             variant='filled'
                                             type='comment'
-                                            placeholder='Type something here... '
+                                            placeholder='I am booooooooored!!! '
                                         />
                                         <InputRightElement mr={5} p='33px'>
                                             <IconButton
@@ -157,9 +146,11 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                     </InputGroup>
                                 </FormControl>
                             </Box>
+
+                            {/* user's comment 2 */}
                             <Box m={3}>
-                                <FormControl id='comment' >
-                                    <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username2 </FormLabel>
+                                <FormControl isReadOnly id='comment' >
+                                    <FormLabel color={textcolor}> username2 </FormLabel>
                                     <InputGroup
                                         size='md'
                                         boxShadow='lg'
@@ -167,7 +158,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                         <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
                                             variant='filled'
                                             type='comment'
-                                            placeholder='Type something here... '
+                                            placeholder='Hello World! '
                                         />
                                         <InputRightElement mr={5} p='33px'>
                                             <IconButton
@@ -183,9 +174,11 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                     </InputGroup>
                                 </FormControl>
                             </Box>
+
+                            {/* user's comment 3 */}
                             <Box m={3}>
-                                <FormControl id='comment' >
-                                    <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username3 </FormLabel>
+                                <FormControl isReadOnly id='comment' >
+                                    <FormLabel color={textcolor}> username3 </FormLabel>
                                     <InputGroup
                                         size='md'
                                         boxShadow='lg'
@@ -193,7 +186,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                         <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
                                             variant='filled'
                                             type='comment'
-                                            placeholder='Type something here... '
+                                            placeholder='great app <3 '
                                         />
                                         <InputRightElement mr={5} p='33px'>
                                             <IconButton
@@ -215,7 +208,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                         <GridItem colEnd={6}>
                             <Box m={5}>
                                 <Link href='https://buy.stripe.com/test_eVaaEP7iBajJ9he8wx'>
-                                    <Image src='./images/adsss3.png' />
+                                    <Image src={isDark ? './images/dark3.png' : './images/adsss3.png'} />
                                 </Link>
                                 
                             </Box>
@@ -297,7 +290,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                             {/* paid ads */}
                             <Box m={5}>
                                 <Link href='https://buy.stripe.com/test_6oE5kveL363t796cMO'>
-                                    <Image src='./images/ad1.png' />
+                                    <Image src={isDark ? './images/dark1.png' :'./images/ad1.png'} />
                                 </Link>
                             </Box>
                             <GridItem colSpan={3}>
@@ -310,9 +303,11 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                     > 
                                         Check out some user's opinions
                                 </Text>
+
+                                {/* user's post 1 */}
                                 <Box m={3}>
                                     <FormControl isReadOnly id='comment' >
-                                        <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username1 </FormLabel>
+                                        <FormLabel color={textcolor}> username1 </FormLabel>
                                         <InputGroup
                                             size='md'
                                             boxShadow='lg'
@@ -325,9 +320,11 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                         </InputGroup>
                                     </FormControl>
                                 </Box>
+
+                                {/* user's post 2 */}
                                 <Box m={3}>
                                     <FormControl isReadOnly id='comment' >
-                                        <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username2 </FormLabel>
+                                        <FormLabel color={textcolor}> username2 </FormLabel>
                                         <InputGroup
                                             size='md'
                                             boxShadow='lg'
@@ -341,9 +338,11 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                         </InputGroup>
                                     </FormControl>
                                 </Box>
+
+                                {/* user's post 3 */}
                                 <Box m={3}>
                                     <FormControl isReadOnly id='comment' >
-                                        <FormLabel color={isDark ? '#5E4D3B' : '#E8DFD8'}> username3 </FormLabel>
+                                        <FormLabel color={textcolor}> username3 </FormLabel>
                                         <InputGroup
                                             size='md'
                                             boxShadow='lg'
@@ -362,7 +361,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                             <GridItem colEnd={6}>
                                 <Box m={3}>
                                     <Link href='https://buy.stripe.com/test_bIY7sDbyR4Zp652003'>
-                                        <Image src='./images/ads2.png' />
+                                        <Image src={isDark ? './images/dark2.png' : './images/ads2.png' } />
                                     </Link>
                                 </Box>
                             </GridItem>

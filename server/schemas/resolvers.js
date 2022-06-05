@@ -1,4 +1,4 @@
-const { AuthenticationError, UserInputError } = require('apollo-server-express');
+const { AuthenticationError } = require('apollo-server-express');
 const { User, Post } = require('../models');
 const { signToken } = require('../utils/auth');
 
@@ -8,7 +8,7 @@ const resolvers = {
             return User.find().populate('posts');
         },
         user: async (parent, { username }) => {
-            return User.findOne({ username }).populate('post');
+            return User.findOne({ username }).populate('posts');
         },
         posts: async (parent, { username }) => {
             const params = username ? { username } : {};
@@ -22,7 +22,7 @@ const resolvers = {
                 return User.findOne({ _id: context.user._id }).populate('posts')
             }
             throw new AuthenticationError('You need to be logged in')
-        },
+        }
     },
 
     Mutation: {
@@ -57,7 +57,7 @@ const resolvers = {
 
                 await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { posts: postText._id } }
+                    { $addToSet: { posts: post._id } }
                 );
 
                 return post;
@@ -66,9 +66,9 @@ const resolvers = {
         },
         removePost: async (parent, { postId }, context) => {
             if (context.user) {
-                const post = await Post.findOneAndDelete({
+                const post = await Post.findByIdAndDelete({
                     _id: postId,
-                    postAuthor: context.user.username,
+                    postAuthor: context.user.username
                 });
 
                 await User.findOneAndUpdate(
@@ -76,50 +76,73 @@ const resolvers = {
                     { $pull: { posts: post._id } }
                 );
 
-                return post;
+                return post
             }
-
+            throw new AuthenticationError('You need to be logged in!')
+        },
+        createComment: async (parent, { postId, commentText }, context) => {
+            if (context.user) {
+                return Post.findOneAndUpdate(
+                    { _id: postId },
+                    {
+                        $addToSet: {
+                            comments: { commentText, commentAuthor: context.user.username }
+                        },
+                    },
+                    {
+                        new: true,
+                        runValidators: true,
+                    }
+                );
+            }
+            throw new AuthenticationError('You need to be logged in!');
+        },
+        removeComment: async (parent, { postId, commentId }, context, info) => {
+            if (context.user) {
+                return Post.findOneAndUpdate(
+                    { _id: postId },
+                    {
+                        $pull: {
+                            comments: {
+                                _id: commentId,
+                                commentAuthor: context.user.username
+                            }
+                        }
+                    },
+                    { new: true}
+                );
+            }
             throw new AuthenticationError('You need to be logged in!')
         },
         likePost: async (parent, { postId }, context) => {
             if (context.user) {
-                console.log(context.user)
                 const post = await Post.findById({
                     _id: postId,
-
                 });
 
-                console.log(post)
-
                 if (post) {
-                    console.log(post.likes)
+                    if (post.likes.find(like => like.username === context.username)) {
+                        //Post is already like and will unlike it
+                        post.likes = post.likes.filter((like) => like.username !== context.username)
+                    } else {
+                        //when post is not liked, when cliked, then post it
+                        // const username = post.likes.username
 
-                    //Need to create a mapping that will  find if a user has already liked the post
-                    console.log(post.likes.username)
-                    if (post.likes.username === context.user.username) {
-                        
+                        post.likes.push({
+                            username: post.likes.username, // delete likes.username if it doesn't work.
+                            createdAt: new Date().toISOString()
+                        });
                     }
-                    // if (post.likes.find(like => like.username === context.user.username)) {
-                    //     //Post is already like and will unlike it
-                    //     post.likes = post.likes.filter((like) => like.username !== context.user.username)
-                    // } else {
-                    //     //when post is not liked, when cliked, then post it
-                    //     // const username = post.likes.username
 
-                    //     post.likes.push({
-                    //         username: context.user.username, // delete likes.username if it doesn't work.
-                    //         createdAt: new Date().toISOString()
-                    //     });
-                    // }
-
-                    // await post.save();
-                    // return post;
+                    await post.save();
+                    return post;
 
                 } else throw new UserInputError('Post not found')
             }
         },
-    }
-}
+    },
+};
+
 
 
 module.exports = resolvers;

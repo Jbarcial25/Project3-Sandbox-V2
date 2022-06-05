@@ -16,22 +16,31 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 
+import { useMutation } from '@apollo/client';
+import { ADD_USER } from '../../utils/mutations';
+
+import Auth from '../../utils/auth'
+
 const Signup = () => {
+  const { colorMode, toggleColorMode } = useColorMode();
+  const textcolor = useColorModeValue('#E8DFD8', 'yellow.900');
+  const bgcolor = useColorModeValue('#ECE8DF', '#BFAE98');
+  const isDark = colorMode === 'dark';
+
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
   const toast = useToast();
   const history = useNavigate();
 
+  //states that set values for the inputs
   const [username, setUsername] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmpassword, setConfirmpassword] = useState();
   const [info, setInformation] = useState();
 
-  const { colorMode, toggleColorMode } = useColorMode();
-  const textcolor = useColorModeValue('#E8DFD8', 'yellow.900');
-  const bgcolor = useColorModeValue('#ECE8DF', '#BFAE98');
-  const isDark = colorMode === 'dark';
+  // const [AddUser, { error, data }] = useMutation(ADD_USER)
+ 
 
   const submitHandler = async () => {
     setInformation(true);
