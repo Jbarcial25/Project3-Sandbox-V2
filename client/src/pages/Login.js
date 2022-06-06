@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { axios } from 'axios';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Flex, Stack, VStack, Spacer, Container } from '@chakra-ui/layout';
 import {
   Input,
@@ -9,6 +9,7 @@ import {
   FormLabel,
   Button,
   ButtonGroup,
+  Link,
   IconButton,
   InputGroup,
   InputRightElement,
@@ -21,63 +22,74 @@ import {
 import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode';
 import { FaSun, FaMoon, FaGithub } from 'react-icons/fa';
 
-import { useMutation } from '@apollo/client'
-import { LOGIN_USER } from '../../utils/mutations'
-
-import Auth from '../../utils/auth'
-
-const Login = (props) => {
+const Login = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
+  const toast = useToast();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
   const [info, setInformation] = useState(false);
+  const history = useNavigate();
 
   const { colorMode, toggleColorMode } = useColorMode();
   const textcolor = useColorModeValue('#E8DFD8', 'yellow.900');
   const bgcolor = useColorModeValue('#ECE8DF', '#BFAE98');
   const isDark = colorMode === 'dark';
 
-  const [formState, setFormSTate] = useState({ email: '', password: '' })
-  const [login, { error, data }] = useMutation(LOGIN_USER)
-
-  const handleChange = (event) => {
-    const { name, value } = event.target
-    
-    setFormSTate({
-      ...formState,
-      [name]: value,
-    });
-  };
-
-  const submitHandler = async (event) => {
-    event.preventDefault();
+  const submitHandler = async () => {
     setInformation(true);
-
-
-    try {
-      const { data } = await login({
-        variables: { ...formState },
+    if (!email || !password) {
+      toast({
+        title: 'Please Fill all the Fields',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom',
       });
-
-      Auth.login(data.login.token);
       setInformation(false);
-    } catch (e) {
-      console.error(e)
+      return;
     }
-    setInformation(false);
-    setFormSTate({
-      email: '',
-      password: ''
-    })
+
+    // console.log(email, password);
+    try {
+      const config = {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      };
+
+      const { data } = await axios.post(
+        '/api/user/login',
+        { email, password },
+        config
+      );
+
+      // console.log(JSON.stringify(data));
+      toast({
+        title: 'Login Successful',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom',
+      });
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      setInformation(false);
+      history.push('/chats');
+    } catch (error) {
+      toast({
+        title: 'Error Occured!',
+        description: error.response.data.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom',
+      });
+      setInformation(false);
+    }
   };
 
   return (
     <Flex flexDirection='column' p='50px' pl='200px'>
-      {data ? (
-              <p>
-                Success! You may now head{' '}
-                <Link to="/">back to the homepage.</Link>
-              </p>
-            ) : (
       <Box
         border='2px'
         borderRadius='md'
@@ -95,11 +107,10 @@ const Login = (props) => {
           >
             <Input
               color='black'
-              name='email'
+              value={email}
               type='email'
-              value={formState.email}
               placeholder='Enter your email address'
-              onChange={handleChange}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </InputGroup>
         </FormControl>
@@ -113,9 +124,8 @@ const Login = (props) => {
             boxShadow='lg'
           >
             <Input
-              name='password'
-              value={formState.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               type={show ? 'text' : 'password'}
               placeholder='Enter password'
             />
@@ -151,13 +161,6 @@ const Login = (props) => {
           <Box></Box>
         </VStack>
       </Box>
-      )}
-
-      {error && (
-        <div className="my-3 p-3 bg-danger text-white">
-          {error.message}
-        </div>
-      )}
     </Flex>
   );
 };
