@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { axios } from 'axios';
 import { useToast } from '@chakra-ui/toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate, useParams, Link as RouteLink } from 'react-router-dom';
 import { Flex, Stack, VStack, Spacer } from '@chakra-ui/layout';
 import {
   Input,
@@ -25,29 +25,74 @@ import {
   Text,
   Wrap,
   WrapItem,
+  Icon,
+  Tooltip,
+  Tag,
+  TagLabel,
 } from '@chakra-ui/react';
 
 import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode';
-import { FaSun, FaMoon, FaGithub, FaUser, FaPaperPlane, FaHeart, FaTrashAlt } from 'react-icons/fa';
+import { FaSun, FaMoon, FaGithub, FaUser, FaPaperPlane, FaHeart, FaTrashAlt, FaHouseUser, FaPowerOff, FaLandmark, } from 'react-icons/fa';
 
 import { useQuery } from '@apollo/client';
 import { QUERY_USER, QUERY_POSTS, QUERY_SINGLE_POST, QUERY_ME } from '../utils/queries';
+import Auth from '../utils/auth';
+import PostList from '../components/PostList';
 import ProfileList from '../components/ProfileLists';
 
 const Profile = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const isDark = colorMode === 'dark';
-  const textcolor = useColorModeValue('yellow.900', '#E8DFD8');
+  const textcolor = useColorModeValue('#BFAE98', '#E8DFD8');
   const bgcolor = useColorModeValue('RGBA(0, 0, 0, 0.16)', 'RGBA(0, 0, 0, 0.36)');
+
   const toast = useToast();
   const navigate = useNavigate();
-
   const [pic, setPic] = useState(false);
-  const [user, setUser] = useState();
+  const [userPic, setUserPic] = useState();
 
-  // uploads user's profile picture
+  const logout = (event) => {
+    event.preventDefault();
+    Auth.logout();
+  };
+
+  const { username: userParam } = useParams();
+
+  const { loading, data } = useQuery(userParam ? QUERY_USER : QUERY_ME, {
+    variables: { username: userParam },
+  });
+
+  const user = data?.me || data?.user || {};
+  if (Auth.loggedIn() && Auth.getProfile().data.username === userParam) {
+    return <Navigate to='/profile' />;
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user?.username) {
+    return (
+      <Text 
+        className='indie'
+        fontWeight='bold'
+        p='20px'
+        fontSize='xl'
+        color={textcolor}
+        textAlign='center'
+      > 
+        You need to be logged in to see this.
+    </Text>
+    );
+  }
+
+  // const { loading, data } = useQuery(QUERY_ME, QUERY_POSTS);
+  // const user = data?.user || [];
+
+
+  // uploads 's profile picture
   const uploadPic = (pics) => {
-    setUser(true);
+    setUserPic(true);
     if (pics === undefined) {
       toast({
         title: 'Please Select an Image!',
@@ -72,11 +117,11 @@ const Profile = () => {
         .then((data) => {
           setPic(data.url.toString());
           console.log(data.url.toString());
-          setUser(false);
+          setUserPic(false);
         })
         .catch((err) => {
           console.log(err);
-          setUser(false);
+          setUserPic(false);
         });
     } else {
       toast({
@@ -86,13 +131,13 @@ const Profile = () => {
         isClosable: true,
         position: 'bottom',
       });
-      setUser(false);
+      setUserPic(false);
       return;
     }
   };
 
   const upload = async () => {
-    setUser(true);
+    setUserPic(true);
     try {
       const config = {
         headers: {
@@ -100,7 +145,7 @@ const Profile = () => {
         },
       };
       const { data } = await axios.post(
-        '/api/user',
+        '/profile',
         {
           pic,
         },
@@ -115,7 +160,7 @@ const Profile = () => {
         position: 'bottom',
       });
       localStorage.setItem('userInfo', JSON.stringify(data));
-      setUser(false);
+      setUserPic(false);
       navigate.push('/profile');
     } catch (error) {
       toast({
@@ -126,46 +171,86 @@ const Profile = () => {
         isClosable: true,
         position: 'bottom',
       });
-      setUser(false);
+      setUserPic(false);
     }
   };
 
-  const { loading, data } = useQuery(QUERY_ME);
-  const me = data?.me || [];
-
   return (
-    <Stack p={5}>
+    <Stack p={5} className={isDark ? 'darkbg': 'lightbg'}>
       <Flex w='100%'>
-        <Spacer></Spacer>
-        <IconButton
-          ml={8}
-          icon={<FaUser />}
-          isRound='true'
-          backgroundColor={bgcolor}
-        ></IconButton>
+          <Link href='https://github.com/a-vitug/react-app'>
+            <IconButton
+              ml={8}
+              icon={<FaGithub />}
+              isRound='true'
+              backgroundColor={bgcolor}
+            ></IconButton>
+          </Link>
 
-        <Link href='https://github.com/a-vitug/react-app'>
           <IconButton
             ml={8}
-            icon={<FaGithub />}
+            icon={isDark ? <FaSun /> : <FaMoon />}
             isRound='true'
+            onClick={toggleColorMode}
             backgroundColor={bgcolor}
           ></IconButton>
-        </Link>
 
-        <IconButton
-          ml={8}
-          icon={isDark ? <FaSun /> : <FaMoon />}
-          isRound='true'
-          onClick={toggleColorMode}
-          backgroundColor={bgcolor}
-        ></IconButton>
+        <Spacer></Spacer>
+
+        {/* if logged in */}
+        {Auth.loggedIn() ? (
+          <>
+            <RouteLink to='/'>
+              <Tooltip label='Home'>
+                <IconButton
+                  ml={8}
+                  icon={<FaLandmark />}
+                  isRound='true'
+                  backgroundColor={bgcolor}
+                >
+                </IconButton>
+              </Tooltip>
+            </RouteLink>
+            
+            <Tooltip label='Logout'>
+              <IconButton onClick={logout}
+                ml={8}
+                icon={<FaPowerOff />}
+                backgroundColor={bgcolor}
+                isRound='true'
+              >
+              </IconButton>
+            </Tooltip>
+            
+            
+          </>
+          // else logged out
+        ) : (
+          <>
+            
+          </>
+        )}
+          
       </Flex>
 
-      <Wrap spacing='30px'>
-        {/* upload user's profile picture */}
-        <WrapItem>
+      <Wrap  >
+
+        {/* upload 's profile picture */}
+        <WrapItem pl={65}>
           <Flex flexDirection='column' p='170px'>
+            {/* renders user's name */}
+            <Text 
+              p={3}
+              color='#1D454E'
+              fontSize='2xl'
+              className='indieFlower' 
+              textAlign='center'
+            >
+              Hello, I'm {user.username}!
+            </Text>
+
+            <Tag colorScheme='whiteAlpha'></Tag>
+
             <Box border='1px' p='10px'>
               <FormControl id='pic'>
                 <FormLabel>Upload your Picture</FormLabel>
@@ -180,29 +265,29 @@ const Profile = () => {
                 backgroundColor='#BDD1B6'
                 style={{ marginTop: 15 }}
                 onClick={upload}
-                isLoading={user}
+                isLoading={userPic}
               >
                 {' '}
                 Upload{' '}
               </Button>
             </Box>
+
           </Flex>
         </WrapItem>
         
         <WrapItem>
-          <Box m='30px'>
+          <Flex flexDirection='column' pt='120px'>
             <Text 
-                textShadow='2px 2px #BFAE98'
+                textShadow={isDark ? '2px 2px #BFAE98' : '2px 2px #E8DFD8'}
                 className='gloria' 
                 p='30px'
-                pl='100px'
                 fontSize='6xl'
                 color={textcolor}
                 > 
-                    What's on your mind? 
+                  Share your thoughts!
             </Text>
             <Center>
-                <Box p='30px' w='80%'>
+                <Box w='100%'>
                     <FormControl id='post'>
                         <InputGroup
                             size='lg'
@@ -225,7 +310,7 @@ const Profile = () => {
                     </FormControl>
                 </Box>
             </Center>
-          </Box>
+          </Flex>
         </WrapItem>
 
         <Divider></Divider>
@@ -249,19 +334,21 @@ const Profile = () => {
                   fontSize='3xl'
                   color={textcolor}
                   > 
-                      Here's some news for you...
+                      Your posts go here...
               </Text>
-
-              {/* user's posts */}
+              
+              {/* user's post list */}
               {loading ? (
                   <Box m={3}>
-                    No Posts
+                    No Posts yet!
                   </Box>
                 ) : (
-                  <ProfileList 
-                    me={me}
+                  <ProfileList
+                    user={user}
+                    posts={user.posts}
                   />
                 )}
+
               
           </GridItem>
 

@@ -32,8 +32,8 @@ const Login = (props) => {
   const [info, setInformation] = useState(false);
 
   const { colorMode, toggleColorMode } = useColorMode();
-  const textcolor = useColorModeValue('#E8DFD8', 'yellow.900');
-  const bgcolor = useColorModeValue('#ECE8DF', '#BFAE98');
+  const textcolor = useColorModeValue('#BFAE98', '#E8DFD8');
+  const bgcolor = useColorModeValue('RGBA(0, 0, 0, 0.16)', 'RGBA(0, 0, 0, 0.36)');
   const isDark = colorMode === 'dark';
 
   const [formState, setFormSTate] = useState({ email: '', password: '' })
@@ -69,7 +69,7 @@ const Login = (props) => {
       password: ''
     })
   };
-
+  //Added
   return (
     <Flex flexDirection='column' p='50px' pl='200px'>
       {data ? (
@@ -82,7 +82,7 @@ const Login = (props) => {
         border='2px'
         borderRadius='md'
         boxShadow='lg'
-        color={isDark ? '#5E4D3B' : '#E8DFD8'}
+        color={textcolor}
         p={20}
       >
         <FormControl id='email' isRequired pb='40px'>
@@ -94,7 +94,7 @@ const Login = (props) => {
             boxShadow='lg'
           >
             <Input
-              color='black'
+              color='yellow.900'
               name='email'
               type='email'
               value={formState.email}
@@ -113,6 +113,7 @@ const Login = (props) => {
             boxShadow='lg'
           >
             <Input
+            color='yellow.900'
               name='password'
               value={formState.password}
               onChange={handleChange}

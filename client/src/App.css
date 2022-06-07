@@ -1,11 +1,66 @@
 @import url('http://fonts.cdnfonts.com/css/halimun');
-@import url('https://fonts.googleapis.com/css2?family=Itim&family=Mali&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Itim&family=Mali&family=Short+Stack&display=swap');
 
+/* main light */
 .background {
     background-image: url(./img/background.png);
     min-height: 100vh;
     background-size: cover;
     background-position: center;
+}
+
+/* main light */
+.lightmain {
+    background-image: url(./img/lightmain.png);
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+/* main dark */
+.darkmain {
+    background-image: url(./img/darkmain.png);
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+/* post background */
+.postbg {
+    background-image: url(./img/postbg.png);
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+/* light bg */
+.lightbg {
+    background-image: url(./img/lightbg.png);
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+/* dark bg */
+.darkbg {
+    background-image: url(./img/darkbg.png);
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+
+/* homepage light bg */
+.hlightbg {
+    background-image: url(./img/lightbg.png);
+    min-height: 100vh;
+    background-size: contain;
+}
+
+/* homepage dark bg */
+.hdarkbg {
+    background-image: url(./img/darkbg.png);
+    min-height: 100vh;
+    background-size: contain;
 }
 
 .text {
@@ -22,4 +77,9 @@
 
 .indie {
     font-family: 'Mali', cursive;
+}
+
+.indieFlower {
+    font-family: 'Short Stack', cursive;
+    font-weight: bold;
 }

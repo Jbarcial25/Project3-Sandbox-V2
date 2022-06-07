@@ -1,9 +1,10 @@
 import Authspage from './auths/Authspage';
 import { Flex, Stack, HStack, Heading, Grid, GridItem, Spacer } from '@chakra-ui/layout';
-import { IconButton, Link, Box, Button, Center, Divider, ButtonGroup, Container, Image, InputGroup, FormControl, FormLabel, Input, Text, InputRightElement, Wrap, WrapItem } from '@chakra-ui/react';
-import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode'
+import { IconButton, Link, Box, Button, Center, Divider, ButtonGroup, Container, Image, InputGroup, FormControl, FormLabel, Input, Text, Tooltip, InputRightElement, Wrap, WrapItem } from '@chakra-ui/react';
+import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode';
+import { Link as RouteLink } from 'react-router-dom';
 
-import { FaSun, FaMoon, FaGithub, FaPaperPlane, FaHeart, FaTrashAlt } from 'react-icons/fa';
+import { FaSun, FaMoon, FaGithub, FaPaperPlane, FaHeart, FaTrashAlt, FaUser, FaPowerOff, FaUserPlus } from 'react-icons/fa';
 
 // swiper elements
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -12,60 +13,72 @@ import 'swiper/css';
 
 import { useQuery } from '@apollo/client';
 import { QUERY_USER, QUERY_POSTS, QUERY_SINGLE_POST, QUERY_ME } from '../utils/queries';
+import Auth from '../utils/auth';
+import PostList from '../components/PostList';
+import PostForm from '../components/PostForm'
 
 export default function Homepage({ loggedIn, setLoggedIn }) {
 
     const { colorMode, toggleColorMode } = useColorMode();
     const isDark = colorMode === 'dark';
-    const textcolor = useColorModeValue('yellow.900', '#E8DFD8');
+    const textcolor = useColorModeValue('#BFAE98', '#E8DFD8');
     const bgcolor = useColorModeValue('RGBA(0, 0, 0, 0.16)', 'RGBA(0, 0, 0, 0.36)');
-    const color = useColorModeValue('#ECE8DF', '#BFAE98')
 
     const outerBoxStyles = {
         background:
           'url(../img/background.png) center/cover no-repeat',
     }
 
+    const logout = (event) => {
+        event.preventDefault();
+        Auth.logout();
+    };
+
+    const { loading, data } = useQuery(QUERY_POSTS)
+    const posts = data?.posts || [];
 
     return (
-        <Stack p={5} sx={outerBoxStyles}>
-            <Flex w='100%'>
-                <Spacer></Spacer>
-                <Link href='https://github.com/a-vitug/react-app'>
-                    <IconButton ml={2} icon={<FaGithub />} backgroundColor={bgcolor} isRound='true'></IconButton>
-                </Link>
-                
-                <IconButton ml={8} icon={isDark ? <FaSun /> : <FaMoon />} backgroundColor={bgcolor} isRound='true' onClick={toggleColorMode}></IconButton>
-            </Flex>
+        <Stack p={5} className={isDark ? 'hdarkbg': 'hlightbg'}>
+            <Box  backdropBlur='3px' borderRadius='md' >
 
             {/* if logged in */}
-            {loggedIn ? (
-                <Box backdropFilter='auto' backdropBlur='3px' borderRadius='md'>
-                    <Flex w='90%'>
-                        <Spacer></Spacer>
-                        <Button ml={2} 
-                            color='#BDD1B6' 
-                            border='2px'
-                            borderRadius='md'
-                            boxShadow='lg'
-                            type='button'
-                            >
-                            <Link to='/profile'> My Account </Link>
-                        </Button>
-                        <Button onClick={() => setLoggedIn(!loggedIn)}
-                            ml={8} 
-                            color='#BDD1B6'
-                            border='2px'
-                            borderRadius='md'
-                            boxShadow='lg'
-                            type='button' 
-                        >
-                            Log out
-                        </Button>
+            {Auth.loggedIn() ? (
+                <>
+                    <Flex w='100%'>
+                        <Link href='https://github.com/a-vitug/react-app'>
+                            <IconButton ml={2} icon={<FaGithub />} backgroundColor={bgcolor} isRound='true'></IconButton>
+                        </Link>
+                        
+                        <IconButton ml={8} icon={isDark ? <FaSun /> : <FaMoon />} backgroundColor={bgcolor} isRound='true' onClick={toggleColorMode}></IconButton>
+                    
+                            <Spacer></Spacer>
+                                <RouteLink to='/profile'>
+                                    <Tooltip label='My Account'>
+                                        <IconButton 
+                                            ml={8}
+                                            icon={<FaUser />}
+                                            backgroundColor={bgcolor}
+                                            isRound='true'
+                                        >
+                                        </IconButton>
+                                    </Tooltip>
+                                </RouteLink>
+
+                                <Tooltip label='Logout'>
+                                    <IconButton
+                                        onClick={logout}
+                                        ml={8}
+                                        icon={<FaPowerOff />}
+                                        backgroundColor={bgcolor}
+                                        isRound='true'
+                                    ></IconButton>
+                                </Tooltip>
+
                     </Flex>
-                    <Box m='30px'>
+
+                    <Box m='50px' mx={300}>
                         <Text 
-                            textShadow='2px 2px #BFAE98'
+                            textShadow={isDark ? '2px 2px #BFAE98' : '2px 2px #E8DFD8'}
                             className='gloria' 
                             p='30px'
                             pl='100px'
@@ -75,28 +88,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                 What's on your mind? 
                         </Text>
                         <Center>
-                            <Box p='30px' w='80%'>
-                                <FormControl id='post'>
-                                    <InputGroup
-                                        size='lg'
-                                        boxShadow='lg'
-                                    >
-                                        <Input h='100px'
-                                            backgroundColor='RGBA(0, 0, 0, 0.16)'
-                                            variant='filled'
-                                            type='post'
-                                            placeholder='Type something here... '
-                                            // onChange={(e) => setEmail(e.target.value)}
-                                        />
-                                        <InputRightElement mr={5} p='50px'>
-                                            <IconButton icon={<FaPaperPlane />} 
-                                            size='lg'
-                                                backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                                color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                                        </InputRightElement>
-                                    </InputGroup>
-                                </FormControl>
-                            </Box>
+                          <PostForm />
                         </Center>
                     </Box>
 
@@ -119,88 +111,19 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                 > 
                                     Here's some news for you...
                             </Text>
-
-                            {/* user's comment 1 */}
-                            <Box m={3}>
-                                <FormControl isReadOnly id='comment' >
-                                    <FormLabel color={textcolor}> username1 </FormLabel>
-                                    <InputGroup
-                                        size='md'
-                                        boxShadow='lg'
-                                    >
-                                        <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
-                                            variant='filled'
-                                            type='comment'
-                                            placeholder='I am booooooooored!!! '
-                                        />
-                                        <InputRightElement mr={5} p='33px'>
-                                            <IconButton
-                                                icon={<FaHeart />} 
-                                                backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                                color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                                            <IconButton 
-                                                icon={<FaTrashAlt />} 
-                                                backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                                color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                                        </InputRightElement>
-                                    </InputGroup>
-                                </FormControl>
+                            <Box>
+                                <RouteLink to="/post"></RouteLink>
                             </Box>
 
-                            {/* user's comment 2 */}
-                            <Box m={3}>
-                                <FormControl isReadOnly id='comment' >
-                                    <FormLabel color={textcolor}> username2 </FormLabel>
-                                    <InputGroup
-                                        size='md'
-                                        boxShadow='lg'
-                                    >
-                                        <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
-                                            variant='filled'
-                                            type='comment'
-                                            placeholder='Hello World! '
+                            {/*POSTS LIST */}
+                                    {loading ? (
+                                        <div> loading....</div>
+                                    ) : (
+                                        <PostList
+                                            posts={posts}
+                                            title='here are some posts'
                                         />
-                                        <InputRightElement mr={5} p='33px'>
-                                            <IconButton
-                                                icon={<FaHeart />} 
-                                                backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                                color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                                            <IconButton 
-                                                icon={<FaTrashAlt />} 
-                                                backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                                color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                                        </InputRightElement>
-                                        
-                                    </InputGroup>
-                                </FormControl>
-                            </Box>
-
-                            {/* user's comment 3 */}
-                            <Box m={3}>
-                                <FormControl isReadOnly id='comment' >
-                                    <FormLabel color={textcolor}> username3 </FormLabel>
-                                    <InputGroup
-                                        size='md'
-                                        boxShadow='lg'
-                                    >
-                                        <Input h='65px' backgroundColor='RGBA(0, 0, 0, 0.16)'
-                                            variant='filled'
-                                            type='comment'
-                                            placeholder='great app <3 '
-                                        />
-                                        <InputRightElement mr={5} p='33px'>
-                                            <IconButton
-                                                icon={<FaHeart />} 
-                                                backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                                color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                                            <IconButton 
-                                                icon={<FaTrashAlt />} 
-                                                backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
-                                                color={isDark ? '#5E4D3B' : '#E8DFD8'} />
-                                        </InputRightElement>
-                                    </InputGroup>
-                                </FormControl>
-                            </Box>
+                                    )}
 
                         </GridItem>
 
@@ -215,20 +138,38 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                         </GridItem>
 
                     </Grid>
-            </Box>
+                
+                </>
 
             // else logged out
             ) : (
-                <Box>
-                    <Flex>
+                <>
+                    <Flex w='100%'>
+
                         <Spacer></Spacer>
-                        <Button m={5} backgroundColor={bgcolor} onClick={() => setLoggedIn(!loggedIn)}>
-                            Log in
-                        </Button>
+
+                        <RouteLink to='/authspage'>
+                            <Tooltip label='Login'>
+                                <IconButton // onClick={() => setLoggedIn(!loggedIn)}
+                                    ml={8}
+                                    icon={<FaUserPlus />}
+                                    backgroundColor={bgcolor}
+                                    isRound='true'
+                                >
+                                </IconButton>
+                            </Tooltip>
+                        </RouteLink>
+
+                        <Link href='https://github.com/a-vitug/react-app'>
+                            <IconButton ml={8} icon={<FaGithub />} backgroundColor={bgcolor} isRound='true'></IconButton>
+                        </Link>
+                        
+                        <IconButton ml={8} icon={isDark ? <FaSun /> : <FaMoon />} backgroundColor={bgcolor} isRound='true' onClick={toggleColorMode}></IconButton>
+
                     </Flex>
                     
 
-                    <Grid templateColumns='repeat(4, 1fr)' gap={1}>
+                    <Grid m={8} mx={100} templateColumns='repeat(4, 1fr)' gap={1}>
                         <GridItem colSpan={2}>
                             <Swiper modules={[Autoplay, Navigation, Pagination, EffectFade]}
                                 autoplay={{ disableOnInteraction: false}}
@@ -369,13 +310,12 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                         </Grid>
                     </Box>
    
-                </Box>
+                </>
                 
             )} 
             
             
-            
+        </Box>
         </Stack>
     );
 }
-

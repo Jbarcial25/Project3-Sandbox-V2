@@ -11,12 +11,12 @@ import Signup from './Signup';
 
 export default function Authspage({ loggedIn, setLoggedIn }) {
   const { colorMode, toggleColorMode } = useColorMode();
-  const textcolor = useColorModeValue('#E8DFD8', 'yellow.900');
-  const bgcolor = useColorModeValue('#ECE8DF', '#BFAE98');
   const isDark = colorMode === 'dark';
+  const textcolor = useColorModeValue('#BFAE98', '#E8DFD8');
+  const bgcolor = useColorModeValue('RGBA(0, 0, 0, 0.16)', 'RGBA(0, 0, 0, 0.36)');
 
   return (
-    <VStack className='background'>
+    <VStack className={isDark ? 'darkmain': 'lightmain'}>
         <Box p={5} ml='auto'>
             <Link href='https://github.com/a-vitug/react-app'>
             <IconButton ml={2} icon={<FaGithub />} isRound='true'></IconButton>
@@ -31,7 +31,7 @@ export default function Authspage({ loggedIn, setLoggedIn }) {
         </Box>
 
       <Wrap color={textcolor}>
-        <Stack pt='180px' textShadow='2px 2px #BFAE98'>
+        <Stack pt='180px' textShadow={isDark ? '2px 2px #BFAE98' : '2px 2px #E8DFD8'}>
           <WrapItem className='halimun'>
             <Text fontSize='90px'>welcome</Text>
           </WrapItem>
@@ -52,7 +52,7 @@ export default function Authspage({ loggedIn, setLoggedIn }) {
                     border='2px'
                     borderRadius='md'
                     boxShadow='lg'
-                    color='#BDD1B6'
+                    color={textcolor}
                     fontWeight='bold'
                     >
                         Login
@@ -62,7 +62,7 @@ export default function Authspage({ loggedIn, setLoggedIn }) {
                     border='2px'
                     borderRadius='md'
                     boxShadow='lg'
-                    color='#BDD1B6'
+                    color={textcolor}
                     fontWeight='bold'
                     >
                         Signup

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { ApolloClient, 
-  InMemoryCache, 
-  ApolloProvider, 
-  createHttpLink 
+import React from 'react';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import './App.css';
 import Homepage from './pages/Homepage';
@@ -13,6 +14,8 @@ import Profile from './pages/Profile';
 import Login from './pages/auths/Login';
 import Signup from './pages/auths/Signup';
 import Authspage from './pages/auths/Authspage';
+import Post from './pages/Post';
+// import Navbar from './components/Navbar';
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -31,6 +34,7 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+
 const client = new ApolloClient({
   // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
   link: authLink.concat(httpLink),
@@ -39,23 +43,24 @@ const client = new ApolloClient({
 
 function App() {
 
-  
 
   return (
     <ApolloProvider client={client}>
       <div className='App'>
         <Routes>
-          <Route path='/' element={<Homepage />} className='Homepage' />
-          <Route path='/authspage' element={<Authspage />} className='Authspage' />
-          <Route path='/login' element={<Login  />} className='Login' />
-          <Route path='/signup' element={<Signup />} className='Signup' />
-          <Route path='/profile' element={<Profile /> } className='Profile' />
+          <Route exact path='/' element={<Homepage />} className='Homepage' />
+          <Route exact path='/authspage' element={<Authspage />} className='Authspage' />
+          <Route exact path='/login' element={<Login />} className='Login' />
+          <Route exact path='/signup' element={<Signup />} className='Signup' />
+          <Route exact path='/profile' element={<Profile />} className='Profile' />
+          <Route exact path='/profile/:username' element={<Profile />} className='Profile' />
+          <Route exact path='/post/:postId' element={<Post />} className='Post' />
         </Routes>
-      
+
       </div>
     </ApolloProvider>
-    
-      
+
+
   )
 }
 
