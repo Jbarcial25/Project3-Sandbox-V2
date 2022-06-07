@@ -20,26 +20,29 @@ const PostList = ({
     const textcolor = useColorModeValue('yellow.900', '#E8DFD8');
     const bgcolor = useColorModeValue('RGBA(0, 0, 0, 0.16)', 'RGBA(0, 0, 0, 0.36)');
 
+    const refresh = function () {
+        document.location.reload()
+    }
 
+    console.log(QUERY_ME)
     const [removePost, { error }] = useMutation(REMOVE_POST, {
         update(cache, { data: { removePost } }) {
             try {
                 cache.writeQuery({
                     query: QUERY_ME,
                     data: { me: removePost }
-                })
+                });
             } catch (e) {
                 console.error(e);
             }
         },
     })
 
-    const handleRemovePost = async (post) => {
-        
+    const handleRemovePost = async (postId) => {
         try {
             const { data } = await removePost({
-                variables: { posts }
-                    
+                variables: { postId }
+
             });
         } catch (err) {
             console.error(err);
@@ -95,7 +98,8 @@ const PostList = ({
                                         // posts text
                                         placeholder={post.postText}
                                     />
-                                    <InputRightElement mr={5} p='33px'>
+                                    <InputRightElement mr={5} p='33px'
+                                        onClick= {refresh}>
                                         <IconButton
                                             icon={<FaHeart />}
                                             backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
@@ -104,7 +108,7 @@ const PostList = ({
                                             icon={<FaTrashAlt />}
                                             backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
                                             color={textcolor}
-                                            onClick={ () => handleRemovePost(post._id)} />
+                                            onClick={() => handleRemovePost(post._id)} />
                                     </InputRightElement>
                                 </InputGroup>
                                 {/* </RouteLink> */}
