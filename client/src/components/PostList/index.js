@@ -34,13 +34,12 @@ const PostList = ({
         },
     })
 
-    const handleRemovePost = async (event) => {
-        event.preventDefault
+    const handleRemovePost = async (post) => {
+        
         try {
             const { data } = await removePost({
-                variables: { 
-                    posts
-                 },
+                variables: { posts }
+                    
             });
         } catch (err) {
             console.error(err);
@@ -105,7 +104,7 @@ const PostList = ({
                                             icon={<FaTrashAlt />}
                                             backgroundColor={isDark ? '#ECE8DF' : '#BFAE98'}
                                             color={textcolor}
-                                            onClick={handleRemovePost} />
+                                            onClick={ () => handleRemovePost(post._id)} />
                                     </InputRightElement>
                                 </InputGroup>
                                 {/* </RouteLink> */}
