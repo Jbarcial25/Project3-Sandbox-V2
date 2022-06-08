@@ -40,8 +40,8 @@ export const ADD_POST = gql`
 `;
 
 export const CREATE_COMMENT = gql`
-    mutation createComment($postId: ID!, $commentText: String!, $commentAuthor: String!) {
-        createComment(postId: $postId, commentText: $commentText, commentAuthor: $commentAuthor) {
+    mutation createComment($postId: ID!, $commentText: String!,) {
+        createComment(postId: $postId, commentText: $commentText,) {
             _id
             postText
             postAuthor

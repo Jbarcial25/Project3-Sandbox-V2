@@ -1,7 +1,7 @@
 import { Stack, VStack } from '@chakra-ui/layout';
 import { Box, Link, IconButton, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react';
-import { FaSun, FaMoon, FaGithub, FaPaperPlane, FaHeart, FaTrashAlt } from 'react-icons/fa';
+import { FaSun, FaMoon, FaGithub} from 'react-icons/fa';
 
 import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode';
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { axios } from 'axios';
 import { Flex, VStack } from '@chakra-ui/layout';
@@ -12,7 +12,6 @@ import {
   ButtonGroup,
   InputGroup,
   InputRightElement,
-  useToast,
   Tooltip,
 } from '@chakra-ui/react';
 
@@ -30,24 +29,85 @@ const Signup = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
-  const [formState, setFormSTate] = useState({
+  const [image, setImage] = useState('');
+  const [userPic, setUserPic] = useState('');
+  const navigate = useNavigate();
+
+  // uploads 's profile picture
+  //added somethings
+  useEffect(() => {
+    if(userPic) {
+      submitHandler()
+    }
+  }, [userPic])
+
+  const uploadPic = () => {
+    if (image.type === 'image/jpeg' || image.type === 'image/png') {
+      const data = new FormData();
+      data.append('file', image);
+      data.append('upload_preset', 'noteful-app');
+      data.append('cloud_name', 'av-code');
+      fetch('https://api.cloudinary.com/v1_1/av-code/image/upload', {
+        method: 'post',
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setUserPic(data.url);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      setUserPic(false);
+      return;
+    }
+  };
+
+  const upload = async () => {
+    setUserPic(true);
+    try {
+      const config = {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      };
+      const { data } = await axios.post(
+        '/profile',
+        {
+          image,
+        },
+        config
+      );
+      console.log(data);
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      setUserPic(false);
+      navigate.push('/profile');
+    } catch (error) {
+
+      setUserPic(false);
+    }
+  };
+
+  const [formState, setFormState] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    pic: userPic,
   });
   const [addUser, { error, data }] = useMutation(ADD_USER)
 
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setFormSTate({
+    setFormState({
       ...formState,
       [name]: value
     })
   }
 
   const submitHandler = async (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     console.log(formState)
     try {
 
@@ -62,6 +122,14 @@ const Signup = () => {
       console.error(e)
     }
   };
+
+  const sendForm = () => {
+    if (image) {
+      uploadPic()
+    } else {
+      submitHandler()
+    }
+  }
 
   //added
   return (
@@ -153,6 +221,27 @@ const Signup = () => {
               </InputGroup>
             </Tooltip>
           </FormControl>
+
+          {/* <Box >
+              <FormControl id='pic'>
+                <FormLabel>Upload your Picture</FormLabel>
+                <Input
+                  type='file'
+                  p={1.5}
+                  accept='image/*'
+                  onChange={(e) => setImage(e.target.files[0])}
+                />
+              </FormControl>
+              <Button
+                backgroundColor='#BDD1B6'
+                style={{ marginTop: 15 }}
+                onClick={handleClick}
+                isLoading={userPic}
+              >
+                {' '}
+                Upload{' '}
+              </Button>
+            </Box> */}
 
           <VStack>
             <ButtonGroup pt={5} alignItems='center'>

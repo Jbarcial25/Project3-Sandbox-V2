@@ -1,21 +1,21 @@
 import Authspage from './auths/Authspage';
 import { Flex, Stack, HStack, Heading, Grid, GridItem, Spacer } from '@chakra-ui/layout';
-import { IconButton, Link, Box, Button, Center, Divider, ButtonGroup, Container, Image, InputGroup, FormControl, FormLabel, Input, Text, Tooltip, InputRightElement, Wrap, WrapItem } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, IconButton, Link, Box, Divider,  Image, InputGroup, FormControl, FormLabel, Input, Text, Tooltip } from '@chakra-ui/react';
 import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode';
 import { Link as RouteLink } from 'react-router-dom';
 
-import { FaSun, FaMoon, FaGithub, FaPaperPlane, FaHeart, FaTrashAlt, FaUser, FaPowerOff, FaUserPlus } from 'react-icons/fa';
+import { FaSun, FaMoon, FaGithub, FaUser, FaPowerOff, FaUserPlus } from 'react-icons/fa';
 
 // swiper elements
 import { Swiper, SwiperSlide } from 'swiper/react';
-import SwiperCore, { Autoplay, Navigation, Pagination, Controller, Thumbs, EffectFade } from 'swiper';
+import SwiperCore, { Autoplay, Navigation, Pagination, EffectFade } from 'swiper';
 import 'swiper/css';
 
 import { useQuery } from '@apollo/client';
-import { QUERY_USER, QUERY_POSTS, QUERY_SINGLE_POST, QUERY_ME } from '../utils/queries';
+import {  QUERY_POSTS} from '../utils/queries';
 import Auth from '../utils/auth';
 import PostList from '../components/PostList';
-import PostForm from '../components/PostForm'
+import PostForm from '../components/PostForm';
 
 export default function Homepage({ loggedIn, setLoggedIn }) {
 
@@ -76,7 +76,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
 
                     </Flex>
 
-                    <Box m='50px' mx={300}>
+                    <Box p='100px' m='50px' mx={300}>
                         <Text 
                             textShadow={isDark ? '2px 2px #BFAE98' : '2px 2px #E8DFD8'}
                             className='gloria' 
@@ -87,9 +87,11 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                             > 
                                 What's on your mind? 
                         </Text>
-                        <Center>
-                          <PostForm />
-                        </Center>
+                        
+                        {/* renders post form */}
+                        <Box textAlign='center'>
+                            <PostForm />
+                        </Box>
                     </Box>
 
                     <Divider />
@@ -97,10 +99,11 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                     <Grid templateColumns='repeat(5, 1fr)' gap={5}>
                         {/* paid ads */}
                         <Box m={3}>
-                                <Link href='https://buy.stripe.com/test_aEU7sD5at8bBali004'>
-                                    <Image src={isDark ? './images/dark4.png' : './images/adss4.png'} />
-                                </Link>
-                            </Box>
+                            <Link href='https://buy.stripe.com/test_aEU7sD5at8bBali004'>
+                                <Image src={isDark ? './images/dark4.png' : './images/adss4.png'} />
+                            </Link>
+                        </Box>
+
                         <GridItem colSpan={3}>
                             <Text 
                                 className='indie'
@@ -248,7 +251,20 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                 {/* user's post 1 */}
                                 <Box m={3}>
                                     <FormControl isReadOnly id='comment' >
-                                        <FormLabel color={textcolor}> username1 </FormLabel>
+                                        <FormLabel color={textcolor}> 
+                                            <AvatarGroup>
+                                                <Avatar 
+                                                    bg='#1D454E'
+                                                    color='#E8DFD8'
+                                                    boxSize={7}
+                                                    name='Xxhera'
+                                                >
+                                                </Avatar>
+                                                <Text pl={5} className='indieFlower'>
+                                                    xxhera
+                                                </Text>
+                                            </AvatarGroup>
+                                        </FormLabel>
                                         <InputGroup
                                             size='md'
                                             boxShadow='lg'
@@ -265,7 +281,23 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                 {/* user's post 2 */}
                                 <Box m={3}>
                                     <FormControl isReadOnly id='comment' >
-                                        <FormLabel color={textcolor}> username2 </FormLabel>
+                                        <FormLabel color={textcolor}>
+                                            <AvatarGroup>
+                                                <Avatar 
+                                                    bg='#1D454E'
+                                                    color='#E8DFD8'
+                                                    boxSize={7}
+                                                    name='Alexaaa'
+                                                >
+                                                </Avatar>
+                                                <Text pl={5} className='indieFlower'>
+                                                    alexaaa
+                                                </Text>
+                                                <Text ml='auto'>
+                                                    
+                                                </Text>
+                                            </AvatarGroup>
+                                        </FormLabel>
                                         <InputGroup
                                             size='md'
                                             boxShadow='lg'
@@ -283,7 +315,20 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                 {/* user's post 3 */}
                                 <Box m={3}>
                                     <FormControl isReadOnly id='comment' >
-                                        <FormLabel color={textcolor}> username3 </FormLabel>
+                                        <FormLabel color={textcolor}> 
+                                            <AvatarGroup>
+                                                <Avatar 
+                                                    bg='#1D454E'
+                                                    color='#E8DFD8'
+                                                    boxSize={7}
+                                                    name='casper'
+                                                >
+                                                </Avatar>
+                                                <Text pl={5} className='indieFlower'>
+                                                    casper
+                                                </Text>
+                                            </AvatarGroup>
+                                        </FormLabel>
                                         <InputGroup
                                             size='md'
                                             boxShadow='lg'
@@ -291,7 +336,7 @@ export default function Homepage({ loggedIn, setLoggedIn }) {
                                             <Input h='65px' backgroundColor={bgcolor}
                                                 variant='filled'
                                                 type='comment'
-                                                placeholder='lorem ipsum dolor sit amet consectetur adipiscing elit. '
+                                                placeholder='everyone did such a good job!'
                                             />
                                         </InputGroup>
                                     </FormControl>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { axios } from 'axios';
 import { Link } from 'react-router-dom';
-import { Flex, Stack, VStack, Spacer, Container } from '@chakra-ui/layout';
+import { Flex, VStack} from '@chakra-ui/layout';
 import {
   Input,
   Box,
@@ -9,13 +8,8 @@ import {
   FormLabel,
   Button,
   ButtonGroup,
-  IconButton,
   InputGroup,
   InputRightElement,
-  useToast,
-  Text,
-  Wrap,
-  WrapItem,
 } from '@chakra-ui/react';
 
 import { useColorMode, useColorModeValue } from '@chakra-ui/color-mode';

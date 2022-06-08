@@ -18,6 +18,7 @@ const resolvers = {
             return Post.findOne({ _id: postId });
         },
         me: async (parent, args, context) => {
+            console.log(context.user)
             if (context.user) {
                 return User.findOne({ _id: context.user._id }).populate('posts')
             }
@@ -26,8 +27,8 @@ const resolvers = {
     },
 
     Mutation: {
-        addUser: async (parent, { username, email, password }) => {
-            const user = await User.create({ username, email, password });
+        addUser: async (parent, { username, email, password, pic }) => {
+            const user = await User.create({ username, email, password, pic });
             const token = signToken(user);
             return { token, user };
         },

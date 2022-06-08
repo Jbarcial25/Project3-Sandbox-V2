@@ -15,7 +15,8 @@ import Login from './pages/auths/Login';
 import Signup from './pages/auths/Signup';
 import Authspage from './pages/auths/Authspage';
 import Post from './pages/Post';
-// import Navbar from './components/Navbar';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer/'
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -56,7 +57,7 @@ function App() {
           <Route exact path='/profile/:username' element={<Profile />} className='Profile' />
           <Route exact path='/post/:postId' element={<Post />} className='Post' />
         </Routes>
-
+      <Footer/>
       </div>
     </ApolloProvider>
 

@@ -19,6 +19,10 @@ const userSchema = new Schema({
     required: true,
     minlength: 5,
   },
+  pic: {
+    type: String,
+    default: 'https://res.cloudinary.com/av-code/image/upload/v1654647494/default-pic.png'
+  },
   posts: [
     {
       type: Schema.Types.ObjectId,
